@@ -6,3 +6,5 @@ export const requestQuoteSucceded = (quote) => ({
 });
 
 export const requestQuoteFailed = () => ({ type: "REQUEST_QUOTE_FAILED" });
+
+export const fetchQuote = () => ({ type: "FETCHED_QUOTE" });

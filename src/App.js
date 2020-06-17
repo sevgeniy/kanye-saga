@@ -1,35 +1,16 @@
-import React, { useEffect } from "react";
-import {
-  requestQuote,
-  requestQuoteSucceded,
-  requestQuoteFailed,
-} from "./actionCreators";
+import React from "react";
+import { fetchQuote } from "./actionCreators";
 
 import { connect } from "react-redux";
 
-const url = "https://api.kanye.rest/";
-
 function App({ quote, isLoading, error, dispatch }) {
-  const fetchQuote = (e) => {
-    dispatch(requestQuote());
+  const handleClick = (e) => {
+    dispatch(fetchQuote());
   };
-
-  useEffect(() => {
-    if (!isLoading) {
-      return;
-    }
-
-    fetch(url)
-      .then((response) => response.json())
-      .then(
-        (data) => dispatch(requestQuoteSucceded(data.quote)),
-        (error) => dispatch(requestQuoteFailed())
-      );
-  }, [isLoading, dispatch]);
 
   return (
     <div>
-      <button onClick={fetchQuote}>Fetch Quote</button>
+      <button onClick={handleClick}>Fetch Quote</button>
       {isLoading && <p>Loading...</p>}
       {error && <p>Some error has occurred</p>}
       {!isLoading && !error && quote && <blockquote>{quote}</blockquote>}

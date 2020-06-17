@@ -2,11 +2,16 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import { createStore } from "redux";
+import { createStore, applyMiddleware } from "redux";
 import reducer from "./reducers";
 import { Provider } from "react-redux";
+import createSagaMiddleware from "redux-saga";
+import { watchFetchQuote } from "./sagas";
 
-const store = createStore(reducer);
+const sagaMiddleware = createSagaMiddleware();
+const store = createStore(reducer, applyMiddleware(sagaMiddleware));
+
+sagaMiddleware.run(watchFetchQuote);
 
 store.subscribe(function () {
   console.log("state", store.getState());
