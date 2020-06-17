@@ -1,26 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import {
+  requestQuote,
+  requestQuoteSucceded,
+  requestQuoteFailed,
+} from "./actionCreators";
 
-function App() {
+import { connect } from "react-redux";
+
+const url = "https://api.kanye.rest/";
+
+function App({ quote, isLoading, error, dispatch }) {
+  const fetchQuote = (e) => {
+    dispatch(requestQuote());
+  };
+
+  useEffect(() => {
+    if (!isLoading) {
+      return;
+    }
+
+    fetch(url)
+      .then((response) => response.json())
+      .then(
+        (data) => dispatch(requestQuoteSucceded(data.quote)),
+        (error) => dispatch(requestQuoteFailed())
+      );
+  }, [isLoading, dispatch]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <button onClick={fetchQuote}>Fetch Quote</button>
+      {isLoading && <p>Loading...</p>}
+      {error && <p>Some error has occurred</p>}
+      {!isLoading && !error && quote && <blockquote>{quote}</blockquote>}
     </div>
   );
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+  quote: state.quote,
+  isLoading: state.isLoading,
+  error: state.error,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  dispatch: dispatch,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
